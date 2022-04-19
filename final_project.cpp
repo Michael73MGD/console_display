@@ -10,12 +10,12 @@ class Display{
 private:
     string screen;
     int width, height;
-    int speed;
+    //int speed;
 public:
     Display(int w, int h, int s=100){
         width = w;
         height = h;
-        speed = s;
+        //speed = s;
         for(int j=0;j<h;j++){
             for(int i=0;i<w;i++){
                 screen.append(". ");
@@ -39,12 +39,12 @@ public:
         // cout<<"h: "<<height<<endl;
         screen.replace(y*(2*width+1)+x*2,2,c);
     }
-    int getSpeed(){
+    /*int getSpeed(){
         return speed;
     }
     void setSpeed(int s){
         speed = s;
-    }
+    }*/
     int getWidth(){
         return width;
     }
@@ -80,10 +80,6 @@ public:
     }
 };
 
-
-
-
-
 class HorizontalLine:public Shape{
 private:
     int length;
@@ -98,7 +94,7 @@ public:
             d->change(getX(), getY(), "--");
             d->print();
             setX(++x);
-            double s = d->getSpeed();
+            //double s = d->getSpeed();
             this_thread::sleep_for(100ms);
         }
         
@@ -125,8 +121,8 @@ public:
             d->change(getX(), getY(), "| ");
             d->print();
             setY(++y);
-            double s = d->getSpeed();
-            this_thread::sleep_for(300ms);
+            //double s = d->getSpeed();
+            this_thread::sleep_for(200ms);
         }
         
     }
@@ -138,10 +134,59 @@ public:
     }
 };
 
+class Rectangle:public Shape{
+private:
+    int height, width;
+public:
+    Rectangle(int x, int y, int width, int height, Display *d){
+        HorizontalLine(x, y, width, d);
+        d->change(x, y, "|-");
+        VerticalLine(x, y+1, height+1-2, d);
+        d->change(x, y+height, "|-");
+        HorizontalLine(x+1, y+height, width-1, d);
+        VerticalLine(x+width, y, height+1, d);
+    }
+};
+
+class Circle:public Shape{
+public:
+    Circle(int x, int y, Display *d){
+        setX(x);
+        setY(y);
+        setD(d);
+        d->change(x, y-2, "__");
+        d->print();
+        this_thread::sleep_for(200ms);
+        d->change(x, y-1, "  ");
+        d->print();
+        this_thread::sleep_for(200ms);
+        d->change(x-1, y-1, " /");
+        d->print();
+        this_thread::sleep_for(200ms);
+        d->change(x+1, y-1, "\\ ");
+        d->print();
+        this_thread::sleep_for(200ms);
+        d->change(x-1, y, " \\");
+        d->print();
+        this_thread::sleep_for(200ms);
+        d->change(x+1, y, "/ ");
+        d->print();
+        this_thread::sleep_for(200ms);
+        d->change(x, y, "__");
+        d->print();
+        this_thread::sleep_for(200ms);
+    }
+};
+
 int main(){
+    //good for vscode
     Display d = Display(45,8);
+    //Display d = Display(65,30);
     HorizontalLine(3,2,20,&d);
     HorizontalLine(10,5,10,&d);
     VerticalLine(25,1,5,&d);
+    Rectangle(27,2,10,4,&d);
+    Circle(2,5,&d);
+    Circle(40,5,&d);
     return 0;
 }
