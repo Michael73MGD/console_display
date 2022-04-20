@@ -2,8 +2,6 @@
 #include <iostream>
 #include <chrono> // std::chrono::microseconds
 #include <thread> // std::this_thread::sleep_for
-
-
 using namespace std;
 
 class Display{
@@ -48,6 +46,14 @@ public:
     int getWidth(){
         return width;
     }
+    bool check(int x, int y){
+        if(x <= width && y <= height){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
 };
 
 class Shape{
@@ -85,6 +91,10 @@ private:
     int length;
 public:
     HorizontalLine(int x, int y, int length, Display *d){
+        if(!d->check(x+length,y)){
+            cout << "Line is out of bounds of the display. "<<endl;
+            return;
+        }
         setX(x);
         setY(y);
         setLength(length);
@@ -112,6 +122,10 @@ private:
     int length;
 public:
     VerticalLine(int x, int y, int length, Display *d){
+        if(!d->check(x,y+length)){
+            cout << "Line is out of bounds of the display. "<<endl;
+            return;
+        }
         setX(x);
         setY(y);
         setLength(length);
@@ -139,6 +153,10 @@ private:
     int height, width;
 public:
     Rectangle(int x, int y, int width, int height, Display *d){
+        if(!d->check(x+width,y+height)){
+            cout << "Rectangle is out of bounds of the display. "<<endl;
+            return;
+        }
         HorizontalLine(x, y, width, d);
         d->change(x, y, "|-");
         VerticalLine(x, y+1, height+1-2, d);
@@ -151,6 +169,10 @@ public:
 class Circle:public Shape{
 public:
     Circle(int x, int y, Display *d){
+        if(!d->check(x+1,y)){
+            cout << "Circle is out of bounds of the display. "<<endl;
+            return;
+        }
         setX(x);
         setY(y);
         setD(d);
@@ -188,5 +210,8 @@ int main(){
     Rectangle(27,2,10,4,&d);
     Circle(2,5,&d);
     Circle(40,5,&d);
+
+    Circle(46,5,&d);
+
     return 0;
 }
