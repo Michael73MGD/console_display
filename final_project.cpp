@@ -37,6 +37,19 @@ public:
         // cout<<"h: "<<height<<endl;
         screen.replace(y*(2*width+1)+x*2,2,c);
     }
+    void clear(){
+        string newScreen;
+        for(int j=0;j<height;j++){
+            for(int i=0;i<width;i++){
+                newScreen.append(". ");
+            }
+            newScreen.append("\n");
+        }
+        screen = newScreen;
+
+        cout << "Display cleared. " <<endl;
+        print();
+    }
     /*int getSpeed(){
         return speed;
     }
@@ -212,6 +225,7 @@ int main(){
     Circle(40,5,&d);
 
     Circle(46,5,&d);
+    //d.clear();
 
     return 0;
 }
