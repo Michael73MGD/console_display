@@ -1,19 +1,22 @@
 #include <string>
 #include <iostream>
-#include <chrono> // std::chrono::microseconds
-#include <thread> // std::this_thread::sleep_for
+#include <chrono> 
+#include <thread> 
 using namespace std;
 
+//This display class handles creating the grid where things will be drawn
 class Display{
 private:
     string screen;
     int width, height;
     //int speed;
 public:
+    //constructor takes a width and height, the optional s was going to be used for speed control
     Display(int w, int h, int s=100){
         width = w;
         height = h;
         //speed = s;
+        //This loop initializes the screen with the grid of dots
         for(int j=0;j<h;j++){
             for(int i=0;i<w;i++){
                 screen.append(". ");
@@ -30,13 +33,17 @@ public:
     void print(){
         cout << screen<<endl;
     }
+    //This function is called everytime a shape wants to update the display
     void change(int x, int y, string c){
         // cout<<"x: "<<x<<endl;
         // cout<<"y: "<<y<<endl;
         // cout<<"w: "<<width<<endl;
         // cout<<"h: "<<height<<endl;
+        
+        //The following line replaces characters at a certain location with those held in c
         screen.replace(y*(2*width+1)+x*2,2,c);
     }
+    //This function clears the display by creating a new one, similar to the constructor
     void clear(){
         string newScreen;
         for(int j=0;j<height;j++){
@@ -59,6 +66,7 @@ public:
     int getWidth(){
         return width;
     }
+    //This function is used before drawing a shape to confirm that it isn't out of bounds of the display
     bool check(int x, int y){
         if(x <= width && y <= height){
             return true;
@@ -69,6 +77,7 @@ public:
     }
 };
 
+//This shape class is the parent to all following specific shape classes
 class Shape{
 private: 
     Display* d;
@@ -81,7 +90,7 @@ public:
         d=nullptr;
         type = "";
     }
-    //virtual void create(Display *display)=0;
+    //virtual void identify()=0;
     int getX(){
         return x;
     }
@@ -104,6 +113,7 @@ private:
     int length;
 public:
     HorizontalLine(int x, int y, int length, Display *d){
+        //Check if the rightmost character is out of bounds of the display
         if(!d->check(x+length,y)){
             cout << "Line is out of bounds of the display. "<<endl;
             return;
@@ -113,6 +123,7 @@ public:
         setLength(length);
         setD(d);
         //cout<<"here x is" <<getX()<<endl;
+        //loops through and calls the change function to update characters
         for(int i=0;i<length;i++){
             d->change(getX(), getY(), "--");
             d->print();
@@ -144,6 +155,7 @@ public:
         setLength(length);
         setD(d);
         //cout<<"here x is" <<getX()<<endl;
+        //Creates a vertical line by using the change function and incrementing y
         for(int i=0;i<length;i++){
             d->change(getX(), getY(), "| ");
             d->print();
@@ -170,6 +182,7 @@ public:
             cout << "Rectangle is out of bounds of the display. "<<endl;
             return;
         }
+        //Creates a rectangle by drawing 2 horizontal lines and one vertical line
         HorizontalLine(x, y, width, d);
         d->change(x, y, "|-");
         VerticalLine(x, y+1, height+1-2, d);
@@ -189,6 +202,7 @@ public:
         setX(x);
         setY(y);
         setD(d);
+        //Draws a circle by calling the change function multiple times
         d->change(x, y-2, "__");
         d->print();
         this_thread::sleep_for(200ms);
@@ -214,8 +228,9 @@ public:
 };
 
 int main(){
-    //good for vscode
+    //This display size works well with the terminal integrated in vscode
     Display d = Display(45,8);
+    //The following display is very large, better for a full screen terminal
     //Display d = Display(65,30);
     HorizontalLine(3,2,20,&d);
     HorizontalLine(10,5,10,&d);
@@ -224,7 +239,9 @@ int main(){
     Circle(2,5,&d);
     Circle(40,5,&d);
 
+    //This circle is purposely out of bounds to display how the bounds check works
     Circle(46,5,&d);
+    //The following line can be used to clear the display
     //d.clear();
 
     return 0;
